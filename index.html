@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Mothers Day Gift</title>
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+<!-- Added Font Awesome for icons -->
+<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" rel="stylesheet">
+<style>
+    body {
+        background-color: rgb(0, 0, 29);
+        padding-bottom: 60px; /* Added padding for the footer */
+    }
+    .container {
+        text-align: center;
+        padding: 20px;
+    }
+    #imageContainer {
+        margin-top: 20px;
+        margin-bottom: 20px;
+        padding-left: 10px; /* Added left padding */
+        padding-right: 10px; /* Added right padding */
+    }
+    #imageContainer img {
+        max-width: 200px;
+        height: auto;
+        margin-bottom: 10px;
+    }
+    #quoteContainer p {
+        color: white;
+        font-size: 1rem;
+        margin-bottom: 10px;
+    }
+    .embed-responsive {
+        position: relative;
+        display: block;
+        width: 100%;
+        padding: 0;
+        overflow: hidden;
+        border-radius: 10px; /* Rounded corners for the video */
+        box-shadow: 0 0 20px rgba(0, 0, 0, 0.1); /* Box shadow for depth */
+    }
+    .embed-responsive::before {
+        display: block;
+        content: "";
+        padding-top: 56.25%; /* 16:9 aspect ratio */
+    }
+    .embed-responsive iframe,
+    .embed-responsive embed,
+    .embed-responsive object,
+    .embed-responsive video {
+        position: absolute;
+        top: 0;
+        left: 0;
+        bottom: 0;
+        width: 100%;
+        height: 100%;
+        border: none;
+    }
+    footer {
+        position: fixed;
+        bottom: 0;
+        width: 100%;
+        background-color: rgb(240, 240, 240); /* Light background color */
+        color: #333; /* Dark text color */
+        padding: 10px 0;
+        text-align: center;
+        visibility: visible; /* Initially visible */
+    }
+    .footer-heart {
+        color: red; /* Red color for the heart icon */
+        margin-left: 5px;
+    }
+    /* Updated Navbar styles */
+    .navbar-custom {
+        background-color: rgb(240, 240, 240); /* Light background color */
+        border-bottom: 1px solid #ccc; /* Light border bottom */
+    }
+    .navbar-custom .navbar-brand {
+        color: rgb(0, 0, 29); /* Dark text color */
+        font-weight: bold;
+    }
+    .navbar-custom .navbar-nav .nav-link {
+        color: rgb(0, 0, 29); /* Dark text color */
+    }
+</style>
+</head>
+<body>
+<nav class="navbar navbar-expand-lg navbar-custom navbar-dark">
+    <div class="container">
+        <a id="navLink" class="navbar-brand" href="#">Mother's Day Gift</a>
+    </div>
+</nav>
+
+<div class="container mt-4">
+    <div id="imageContainer" class="d-flex justify-content-center align-items-center">
+        <div id="quoteContainer" class="mb-4"></div>
+    </div>
+    <button id="generateButton" class="btn btn-primary mt-3">Click here</button>
+</div>
+
+<footer id="footer">
+    Made with <i class="fas fa-heart footer-heart"></i> <p style="margin: 5px 0;">Developed by Vividh and Vidhaan</p>
+</footer>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/js/all.min.js"></script>
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+    const quoteContainer = document.getElementById('quoteContainer');
+    const generateButton = document.getElementById('generateButton');
+    const navLink = document.getElementById('navLink');
+    const footer = document.getElementById('footer');
+    let previousIndex = null;
+    let videoClicked = false; // Flag to track if video is clicked
+
+    const generateRandomContent = async () => {
+        try {
+            const responseQuotes = await fetch('quotes.json');
+            const responseImages = await fetch('images.json');
+            const dataQuotes = await responseQuotes.json();
+            const dataImages = await responseImages.json();
+
+            let randomQuoteIndex = Math.floor(Math.random() * dataQuotes.quotes.length);
+            let randomImageIndex = Math.floor(Math.random() * dataImages.images.length);
+
+            while (randomQuoteIndex === previousIndex) {
+                randomQuoteIndex = Math.floor(Math.random() * dataQuotes.quotes.length);
+            }
+            previousIndex = randomQuoteIndex;
+
+            const randomQuote = dataQuotes.quotes[randomQuoteIndex].quote;
+            const randomImagePath = dataImages.images[randomImageIndex].image;
+
+            quoteContainer.innerHTML = `<p>${randomQuote}</p>`;
+            quoteContainer.insertAdjacentHTML('afterbegin', `<img src="${randomImagePath}" class="img-fluid" alt="Random Image">`);
+        } catch (error) {
+            console.error('Error fetching data:', error);
+        }
+    };
+
+    generateRandomContent();
+
+    generateButton.addEventListener('click', generateRandomContent);
+
+    navLink.addEventListener('click', function (event) {
+        event.preventDefault();
+        if (!videoClicked) { // Check if video is not already clicked
+            const videoPath = 'images/jai_video.mp4';
+            const videoContainer = document.createElement('div');
+            videoContainer.classList.add('embed-responsive', 'embed-responsive-16by9');
+            videoContainer.innerHTML = `
+                <video class="embed-responsive-item" controls autoplay>
+                    <source src="${videoPath}" type="video/mp4">
+                    Your browser does not support the video tag.
+                </video>
+            `;
+            document.body.appendChild(videoContainer);
+            videoClicked = true; // Set videoClicked flag to true
+            footer.style.visibility = 'hidden'; // Hide the footer
+        }
+    });
+});
+</script>
+</body>
+</html>
+
